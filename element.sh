@@ -1,7 +1,13 @@
 #!/bin/bash
 PSQL="psql -X --username=freecodecamp --dbname=periodic_table --tuples-only -c"
 
-
+GET_PROPS () {
+  TYPE_ID+$($PSQL "select type_id from properties where atomic_number=$ATOMIC_NUMBER;")
+  TYPE=$($PSQL "select type from types where type_id=$TYPE_ID;")
+  AW=$($PSQL "select atomic_mass from properties where atomic_number=$ATOMIC_NUMBER;")
+  MP=$($PSQL "select melting_point_celsius from properties where atomic_number=$ATOMIC_NUMBER;")
+  BP=$($PSQL "select boiling_point_celsius from properties where atomic_number=$ATOMIC_NUMBER;")
+}
 
 if [[ -z $1 ]]
   then
@@ -14,14 +20,18 @@ if [[ -z $1 ]]
       NAME=$($PSQL "SELECT name from elements where atomic_number = $1;")
       SYMBOL=$($PSQL "SELECT symbol FROM elements WHERE atomic_number = $1;")
       ATOMIC_NUMBER=$1
-      echo "The element with atomic number $ATOMIC_NUMBER is$NAME (${SYMBOL})."
-      GET_PROPS
-    fi
+      
 
     #check if argument is one or two leters
 
     #check if arguent is in list of elements name
-    
+
+    fi
+  
+    GET_PROPS
+    echo "The element with atomic number $ATOMIC_NUMBER is$NAME (${SYMBOL}). It's a$TYPE, with a mass of ${AW} amu. 
+Hydrogen has a melting point of ${MP} celsius and a boiling point of ${BP} celsius."
+
   fi
 
 #get element data
@@ -38,7 +48,3 @@ atomic_weight
 melting_point_celsius
 boiling_point_celsius
 '
-
-#print report
-echo -e "The element with atomic number 1 is Hydrogen (H). It's a nonmetal, with a mass of 1.008 amu. 
-Hydrogen has a melting point of -259.1 celsius and a boiling point of -252.9 celsius."
