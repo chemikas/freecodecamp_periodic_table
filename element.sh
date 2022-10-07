@@ -17,7 +17,10 @@ PRINT(){
   echo "The element with atomic number $ATOMIC_NUMBER is $NAME ($SYMBOL). It's a $TYPE, with a mass of $AW amu. $NAME has a melting point of ${MP} celsius and a boiling point of ${BP} celsius."
 }
 
-ERR_MESSAGE
+ERR_MESSAGE () {
+  echo "I could not find that element in the database."
+}
+
 if [[ -z $1 ]]
   then
       echo "Please provide an element as an argument."
@@ -25,25 +28,33 @@ if [[ -z $1 ]]
     # check if argument is a number
     if [[ $1 =~ ^[0-9]+$ ]]
     then 
-         
       NAME="$(echo -e "$($PSQL "SELECT name from elements where atomic_number = $1;")" | sed -e 's/^[[:space:]]*//')"
-      SYMBOL=$($PSQL "SELECT symbol FROM elements WHERE atomic_number = $1;") 
-      SYMBOL="$(echo -e "$SYMBOL" | sed -e 's/^[[:space:]]*//')"
-      ATOMIC_NUMBER=$1
-      GET_PROPS
-      PRINT
+      if [[ -z $NAME ]]
+      then 
+        ERR_MESSAGE
+      else
+        SYMBOL=$($PSQL "SELECT symbol FROM elements WHERE atomic_number = $1;") 
+        SYMBOL="$(echo -e "$SYMBOL" | sed -e 's/^[[:space:]]*//')"
+        ATOMIC_NUMBER=$1
+        GET_PROPS
+        PRINT
+      fi
     else
      #check if argument is one or two leters
-    
       if [[ $1 =~ ^[A-Za-z]{2}$|^[A-Za-z]$ ]]
       then
         echo "It's two letters"
         SYMBOL=$1
         ATOMIC_NUMBER=$($PSQL "SELECT atomic_number FROM elements WHERE symbol='$1';")
         ATOMIC_NUMBER="$(echo -e "$ATOMIC_NUMBER" | sed -e 's/^[[:space:]]*//')"
-        NAME="$(echo -e "$($PSQL "SELECT name from elements where atomic_number='$ATOMIC_NUMBER';")" | sed -e 's/^[[:space:]]*//')"
-        GET_PROPS
-        PRINT
+        if [[ -z $ATOMIC_NUMBER ]]
+        then 
+          ERR_MESSAGE
+        else
+          NAME="$(echo -e "$($PSQL "SELECT name from elements where atomic_number='$ATOMIC_NUMBER';")" | sed -e 's/^[[:space:]]*//')"
+          GET_PROPS
+          PRINT
+        fi
 
       else 
         #check if arguent is in list of elements name
