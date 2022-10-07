@@ -25,16 +25,22 @@ if [[ -z $1 ]]
       SYMBOL=$($PSQL "SELECT symbol FROM elements WHERE atomic_number = $1;") 
       SYMBOL="$(echo -e "$SYMBOL" | sed -e 's/^[[:space:]]*//')"
       ATOMIC_NUMBER=$1
-      
 
-    #check if argument is one or two leters
-
-    #check if arguent is in list of elements name
-
-    fi
+    else
+     #check if argument is one or two leters
+    
+      if [[ $1 =~ ^[A-Za-z]{2}$|^[A-Za-z]$ ]]
+      then
+        echo "It's two letters"
+        
+      else 
+        #check if arguent is in list of elements name
+        echo "NOT A CHANCE ! ! ! ! ! ! ! ! "
+      fi
+  fi    
   
-    GET_PROPS
-    echo "The element with atomic number $ATOMIC_NUMBER is $NAME ($SYMBOL). It's a $TYPE, with a mass of $AW amu. $NAME has a melting point of ${MP} celsius and a boiling point of ${BP} celsius."
+    #GET_PROPS
+    #echo "The element with atomic number $ATOMIC_NUMBER is $NAME ($SYMBOL). It's a $TYPE, with a mass of $AW amu. $NAME has a melting point of ${MP} celsius and a boiling point of ${BP} celsius."
 
   fi
 
