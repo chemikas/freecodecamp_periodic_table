@@ -34,17 +34,3 @@ Hydrogen has a melting point of ${MP} celsius and a boiling point of ${BP} celsi
 
   fi
 
-#get element data
-echo " DON'T WORRY, BE HAPPY ! ! ! ! "
-:'
-_elements
-atomic_number
-name
-symbol
-_types
-type
-_properties
-atomic_weight
-melting_point_celsius
-boiling_point_celsius
-'
