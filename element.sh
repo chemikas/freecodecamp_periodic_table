@@ -43,7 +43,6 @@ if [[ -z $1 ]]
      #check if argument is one or two leters
       if [[ $1 =~ ^[A-Za-z]{2}$|^[A-Za-z]$ ]]
       then
-        echo "It's two letters"
         SYMBOL=$1
         ATOMIC_NUMBER=$($PSQL "SELECT atomic_number FROM elements WHERE symbol='$1';")
         ATOMIC_NUMBER="$(echo -e "$ATOMIC_NUMBER" | sed -e 's/^[[:space:]]*//')"
@@ -58,7 +57,17 @@ if [[ -z $1 ]]
 
       else 
         #check if arguent is in list of elements name
-        echo "NOT A CHANCE ! ! ! ! ! ! ! ! "
+        NAME=$1
+        ATOMIC_NUMBER=$($PSQL "SELECT atomic_number FROM elements WHERE name='$1';")
+        ATOMIC_NUMBER="$(echo -e "$ATOMIC_NUMBER" | sed -e 's/^[[:space:]]*//')"
+        if [[ -z $ATOMIC_NUMBER ]]
+        then 
+          ERR_MESSAGE
+        else
+          SYMBOL="$(echo -e "$($PSQL "SELECT symbol from elements where atomic_number='$ATOMIC_NUMBER';")" | sed -e 's/^[[:space:]]*//')"
+          GET_PROPS
+          PRINT
+        fi
       fi
   fi    
 fi
